@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+
+<mapper namespace="blog.mapper.CommentMapper">
+    <!--所有字段-->
+    <sql id="t_columns">
+     comment_id, comment_pid, comment_pname, comment_article_id, comment_author_name,
+     comment_author_email, comment_author_url, comment_author_avatar, comment_content, comment_agent,
+     comment_ip,comment_create_time, comment_role
+    </sql>
+
+    <resultMap id="CommentArticle" type="blog.entity.Comment">
+        <result property="commentId" column="comment_id"/>
+        <result property="commentAuthorName" column="comment_author_name"/>
+        <result property="commentContent" column="comment_content"/>
+        <association property="article" javaType="blog.entity.Article">
+            <result property="articleTitle" column="article_title"/>
+        </association>
+    </resultMap>
+    <select id="getListRecentComment" resultMap="CommentArticle">
+        select c.comment_id, c.comment_author_name, c.comment_content, a.article_title  from comment c, article a where c.comment_article_id=a.article_id order by comment_id desc limit #{n}
+    </select>
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="blog.mapper.UserMapper">
+    <sql id="t_columns">
+        user_id, user_name, user_pass, user_nickname, user_email, user_url, user_avatar,
+        user_last_login_ip, user_register_time, user_last_login_time, user_status
+    </sql>
+    <resultMap id="userList" type="blog.entity.User">
+        <id property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="userPass" column="user_pass"/>
+        <result property="userNickname" column="user_nickname"/>
+        <result property="userEmail" column="user_email"/>
+        <result property="userUrl" column="user_url"/>
+        <result property="userAvatar" column="user_avatar"/>
+        <result property="userLastLoginIp" column="user_last_login_ip"/>
+        <result property="userRegisterTime" column="user_register_time"/>
+        <result property="userLastLoginTime" column="user_last_login_time"/>
+        <result property="userStatus" column="user_status"/>
+        <association property="userArticleCount" column="user_id"
+                     select="blog.mapper.ArticleMapper.getUserArticleCount" javaType="int"/>
+    </resultMap>
+
+    <select id="getUserByNameOrEmail" parameterType="string" resultType="blog.entity.User">
+        select <include refid="t_columns" /> from user where user_name=#{str} or user_email=#{str} and user_status > 0 limit 1
+    </select>
+    <select id="getUserCount" resultType="int">
+        select count(*) from user
+    </select>
+
+    <select id="getUserList" resultMap="userList">
+        select * from user
+    </select>
+
+    <insert id="addUser" parameterType="blog.entity.User" useGeneratedKeys="true" keyProperty="userId">
+        insert into user(user_name, user_pass, user_nickname, user_email, user_url, user_avatar,
+        user_last_login_ip, user_register_time, user_last_login_time, user_status)
+        values (#{userName},#{userPass},#{userNickname},#{userEmail},#{userUrl},#{userAvatar},
+        #{userLastLoginIp},#{userRegisterTime},#{userLastLoginTime},#{userStatus})
+    </insert>
+</mapper>

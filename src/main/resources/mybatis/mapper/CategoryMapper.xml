@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="blog.mapper.CategoryMapper">
+    
+    <resultMap id="categoryList" type="blog.entity.Category">
+        <id property="categoryId" column="category_id"/>
+        <result property="categoryName" column="category_name" />
+    </resultMap>
+    <select id="getCategoryList" resultMap="categoryList">
+        select c.category_id,c.category_name
+        from category c
+        join article_category_ref ac
+        on c.category_id=ac.category_id
+        where ac.article_id=#{article_id,jdbcType=INTEGER}
+    </select>
+
+    <select id="getAllCategory" resultType="blog.entity.Category">
+        select * from category
+    </select>
+    <select id="getSubList" resultType="blog.entity.Category">
+        select * from category where category_pid=#{parentId}
+    </select>
+
+    <insert id="addArticleCategory">
+        insert into article_category_ref(article_id,category_id) value
+        <foreach collection="categoryList" separator="," item="item">
+            (#{articleId},#{item.categoryId})
+        </foreach>
+    </insert>
+
+
+</mapper>
